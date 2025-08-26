@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Base theme */
+  --bg-primary: #0A0A0A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --skyBlue: #87CEEB;
+  --steelGray: #B0C4DE;
+  --slateGray: #708090;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(20, 20, 30, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-shadow: rgba(0, 0, 0, 0.25);
+  --glass-blur: 16px;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Utilities */
+.text-text-secondary { color: var(--text-secondary); }
+
+@keyframes mother-of-pearl-sheen {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.mother-of-pearl-text {
+  background-image: linear-gradient(110deg, hsl(210, 40%, 95%), hsl(220, 40%, 92%), hsl(230, 56%, 90%), hsl(210, 40%, 95%));
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: mother-of-pearl-sheen 18s ease-in-out infinite;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes button-sheen {
+  0% { transform: translateX(-40%) rotate(20deg); opacity: 0.0; }
+  10% { opacity: 0.7; }
+  40% { transform: translateX(140%) rotate(20deg); opacity: 0.0; }
+  100% { transform: translateX(140%) rotate(20deg); opacity: 0.0; }
+}
+
+.primary-button, .pearl-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.3s ease-in-out;
+}
+
+.primary-button {
+  position: relative;
+  overflow: hidden;
+  color: #1e40af; /* blue-800 */
+  background-image: linear-gradient(135deg, #ffffff 0%, #e0f2fe 20%, #bfdbfe 40%, #93c5fd 60%, #60a5fa 80%, #3b82f6 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3), 0 4px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.pearl-button {
+  position: relative;
+  overflow: hidden;
+  color: #1e40af; /* blue-800 slightly different */
+  background-image: linear-gradient(120deg, #e0f2fe, #dbeafe 45%, #ccddf5);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 0 22px rgba(173, 216, 230, 0.3);
+}
+
+.primary-button:hover:not(:disabled), .pearl-button:hover:not(:disabled) {
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4), 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-3px);
+  filter: brightness(1.15) saturate(1.1);
+}
+
+.primary-button::after {
+  content: '';
+  position: absolute;
+  top: -150%;
+  left: -50%;
+  width: 60%;
+  height: 400%;
+  transform: rotate(20deg);
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.6), rgba(255,255,255,0));
+  animation: button-sheen 4.5s infinite;
+}
+
+.pearl-button::after {
+  content: '';
+  position: absolute;
+  top: -150%;
+  left: -50%;
+  width: 60%;
+  height: 400%;
+  transform: rotate(20deg);
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.45), rgba(255,255,255,0));
+  animation: button-sheen 4.5s infinite;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 1rem;
+}
+
+/* Add themed scrollbar utility */
+.scrollbar-themed {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #9ed9f2 rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-themed::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-themed::-webkit-scrollbar-track {
+  background: radial-gradient(120px 120px at 50% 50%, rgba(255,255,255,0.06), rgba(255,255,255,0));
+}
+
+@keyframes scrollbar-glow {
+  0% { box-shadow: 0 0 10px rgba(135,206,235,0.25), inset 0 0 0 1px rgba(255,255,255,0.35); }
+  50% { box-shadow: 0 0 18px rgba(135,206,235,0.45), inset 0 0 0 1px rgba(255,255,255,0.5); }
+  100% { box-shadow: 0 0 10px rgba(135,206,235,0.25), inset 0 0 0 1px rgba(255,255,255,0.35); }
+}
+
+.scrollbar-themed::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(158,217,242,0.95) 0%, rgba(255,255,255,0.95) 100%);
+  animation: scrollbar-glow 3s ease-in-out infinite;
+}
+
+.scrollbar-themed::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(135,206,235,1) 0%, rgba(255,255,255,1) 100%);
+}
+
+.scrollbar-themed::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Subtle text glow utility */
+.text-glow {
+  text-shadow: 0 0 6px rgba(135, 206, 235, 0.35), 0 0 16px rgba(255, 255, 255, 0.25);
+}
+
+/* Animated blue-white gradient for WORDARA AI wordmark */
+@keyframes wordara-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.wordara-gradient {
+  background-image: linear-gradient(110deg, #ffffff, #e6f6ff, #bfe8ff, #87CEEB, #ffffff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: wordara-gradient-shift 8s ease-in-out infinite;
+}
+
+/* Typography utility */
+.helvetica-bold {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}

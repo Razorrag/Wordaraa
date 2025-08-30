@@ -1,9 +1,11 @@
+// src/components/chatbot/Chatbot.js
+
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
-import ReactMarkdown from 'react-markdown'; // <-- 1. IMPORT THE LIBRARY
+import ReactMarkdown from 'react-markdown';
 
 export default function Chatbot({ user }) {
   const [messages, setMessages] = useState([]);
@@ -84,15 +86,11 @@ export default function Chatbot({ user }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="glass-card flex flex-col h-[85vh] max-h-[800px] w-full max-w-3xl mx-auto p-4 md:p-6"
-      style={{
-        background: 'rgba(30, 41, 59, 0.4)',
-        borderColor: 'rgba(51, 65, 85, 0.5)',
-        backdropFilter: 'blur(20px)',
-      }}
+      // --- MODIFICATION: Removed card styling and fixed height ---
+      className="flex flex-col h-full w-full"
     >
       <h2 className="text-3xl font-bold mother-of-pearl-text mb-4 pb-2 border-b border-white/10 text-center">
         Your AI Assistant
@@ -116,7 +114,6 @@ export default function Chatbot({ user }) {
                     : 'bg-slate-700/70 text-white rounded-bl-none'
                 }`}
               >
-                {/* --- 2. THIS IS THE ONLY CHANGE IN THE JSX --- */}
                 <div className="markdown-content">
                   <ReactMarkdown>{msg.text}</ReactMarkdown>
                 </div>
@@ -125,7 +122,6 @@ export default function Chatbot({ user }) {
           ))}
         </AnimatePresence>
         
-        {/* ... (Thinking indicator and the form at the bottom remain exactly the same) ... */}
         <AnimatePresence>
           {isThinking && (
             <motion.div
@@ -144,7 +140,6 @@ export default function Chatbot({ user }) {
       </div>
 
       <form onSubmit={handleSendMessage} className="relative mt-4 pt-4 border-t border-white/10 flex gap-3">
-        {/* ...form content... */}
         <div className="relative" ref={inputOptionsRef}>
           <motion.button type="button" onClick={() => setShowInputOptions(!showInputOptions)} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} disabled={isThinking} className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/70 text-white text-2xl font-bold transition-colors duration-200 hover:bg-blue-500/80 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:bg-slate-500/50 disabled:cursor-not-allowed">
             {showInputOptions ? '−' : '+'}

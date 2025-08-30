@@ -182,3 +182,37 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
 }
+/* ... (keep all your existing CSS) ... */
+
+/* Add these styles for beautifully rendered markdown content */
+.markdown-content p {
+  margin-bottom: 0.75rem; /* Add space between paragraphs */
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0; /* Remove space from the very last paragraph */
+}
+
+.markdown-content strong {
+  font-weight: 600; /* Make bold text stand out a bit more */
+  color: #ffffff; /* Make bold text fully white */
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 1.25rem; /* Indent lists */
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.markdown-content ul {
+  list-style-type: disc; /* Use standard bullet points for unordered lists */
+}
+
+.markdown-content ol {
+  list-style-type: decimal; /* Use numbers for ordered lists */
+}
+
+.markdown-content li {
+  margin-bottom: 0.25rem; /* Add a little space between list items */
+}

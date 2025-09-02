@@ -182,9 +182,14 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
 }
-/* ... (keep all your existing CSS) ... */
 
-/* Add these styles for beautifully rendered markdown content */
+/* Styles for beautifully rendered markdown content */
+.markdown-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* Legacy support */
+  word-break: break-word;
+}
+
 .markdown-content p {
   margin-bottom: 0.75rem; /* Add space between paragraphs */
 }
@@ -215,4 +220,77 @@ body {
 
 .markdown-content li {
   margin-bottom: 0.25rem; /* Add a little space between list items */
+}
+
+/* Styles for code blocks (<pre><code>...</code></pre>) */
+.markdown-content pre {
+  background-color: rgba(0, 0, 0, 0.35); /* Slightly darker, distinct background */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.75rem; /* Match the bubble roundness */
+  overflow-x: auto; /* THIS IS THE KEY FIX: enables horizontal scrolling */
+  font-size: 0.9rem; /* A good readable size for code */
+  line-height: 1.6;
+  
+  /* Themed scrollbar for code blocks */
+  scrollbar-width: thin;
+  scrollbar-color: #9ed9f2 rgba(0, 0, 0, 0.3);
+}
+
+.markdown-content pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background-color: #9ed9f2;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background-color: #b0e0f6;
+}
+
+/* Styles for inline code (`code`) */
+.markdown-content code {
+  background-color: rgba(148, 163, 184, 0.2); /* slate-500 with alpha */
+  color: #e2e8f0; /* slate-200 */
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  border-radius: 6px;
+}
+
+/* Reset styles for code inside pre blocks to avoid double styling */
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  border-radius: 0;
+  color: inherit; /* Inherit color from the pre tag */
+}
+
+/* Bonus: styles for tables if they appear in markdown */
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.markdown-content th, .markdown-content td {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+
+.markdown-content th {
+  background-color: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
 }

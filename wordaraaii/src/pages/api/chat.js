@@ -14,11 +14,14 @@ export default async function handler(req) { // Changed to just req
     if (!message) {
       return new Response('Message is required', { status: 400 });
     }
+    
+    // Add instructions for the AI to handle document generation requests
+    const enhancedMessage = `${message}\n\n---\n**AI Instructions:** If my request is to create, generate, or make a document, you must generate a structured document outline. After the outline is complete, you absolutely MUST end your entire response with the following special tag on its own new line: [GENERATE_DOCUMENT]`;
 
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
 
     // Get the streaming response from Google
-    const result = await model.generateContentStream(message);
+    const result = await model.generateContentStream(enhancedMessage);
 
     // Create a new ReadableStream to send to the client
     const stream = new ReadableStream({

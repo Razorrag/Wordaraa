@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/lib/supabase';
 import UrlImportModal from '@/components/ui/UrlImportModal';
+import { useRouter } from 'next/router';
 
 // Helper components
 const Icon = ({ path, className = "h-5 w-5" }) => (
@@ -113,6 +114,7 @@ export default function Chatbot({ user, chatId, onNewChatCreated }) {
   const inputOptionsRef = useRef(null);
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
+  const router = useRouter();
 
   // Auto-resize textarea height based on content
   useEffect(() => {
@@ -325,6 +327,12 @@ export default function Chatbot({ user, chatId, onNewChatCreated }) {
   const isDisabled = isLoading || isUploading;
   const canSubmit = !isDisabled && (input.trim().length > 0 || attachments.length > 0);
 
+  const handleGenerateDocumentClick = (content) => {
+    const cleanedContent = content.replace(/\[GENERATE_DOCUMENT\]/g, '').trim();
+    localStorage.setItem('wordaraDocumentContent', cleanedContent);
+    router.push('/document-generator');
+  };
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="flex flex-col h-full w-full">
       <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".txt,.js,.py,.html,.css,.md,.json,.csv,.pdf,.docx" />
@@ -337,7 +345,29 @@ export default function Chatbot({ user, chatId, onNewChatCreated }) {
               <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className={`flex mb-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] px-4 py-3 rounded-2xl shadow-md ${msg.sender === 'user' ? 'bg-blue-600/70 text-white rounded-br-none' : 'bg-slate-700/70 text-white rounded-bl-none'}`}>
                   <div className="markdown-content text-base">
-                    <ReactMarkdown>{msg.text || "..."}</ReactMarkdown>
+                    <ReactMarkdown
+                      components={{
+                        p: ({ node, ...props }) => {
+                          const child = node.children[0];
+                          if (child && child.type === 'text' && child.value === '[GENERATE_DOCUMENT]') {
+                            return (
+                              <div className="mt-4 flex justify-start">
+                                <Button
+                                  onClick={() => handleGenerateDocumentClick(msg.text)}
+                                  className="primary-button !py-2 !px-4 text-sm"
+                                >
+                                  <Icon path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" className="w-4 h-4 mr-2" />
+                                  Generate Document
+                                </Button>
+                              </div>
+                            );
+                          }
+                          return <p {...props} />;
+                        },
+                      }}
+                    >
+                      {msg.text || "..."}
+                    </ReactMarkdown>
                   </div>
                 </div>
               </motion.div>

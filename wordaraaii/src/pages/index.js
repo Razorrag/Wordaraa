@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import VantaBackground from '@/components/shared/VantaBackground';
-import Chatbot from '@/components/chatbot/Chatbot';
+import Chatbot from '@/components/Chatbot/Chatbot';
 
 // A simple Icon component for the UI
 const Icon = ({ path, className = "h-5 w-5" }) => (
@@ -52,7 +52,7 @@ const Sidebar = ({ chatHistory, onSelectChat, onNewChat }) => {
       </div>
 
        <div className="mt-4 pt-4 border-t border-white/10 text-center text-xs text-white/50">
-          <p>© {new Date().getFullYear()} Wordara. All rights reserved.</p>
+          <p> 2023 Wordara. All rights reserved.</p>
       </div>
     </aside>
   );
@@ -180,16 +180,6 @@ export default function MainPage() {
                 <div className="text-xl font-bold mother-of-pearl-text">Wordara</div>
             </div>
             <div className="flex items-center gap-4">
-                <Link href="/document-generator" passHref>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="primary-button text-sm font-semibold py-2 px-4 shadow-lg flex items-center justify-center gap-2"
-                    >
-                        <Icon path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        Generate Document
-                    </motion.button>
-                </Link>
                 <UserProfile user={user} onSignOut={handleSignOut} />
             </div>
         </header>

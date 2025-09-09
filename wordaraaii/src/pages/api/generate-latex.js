@@ -1,9 +1,9 @@
+// src/pages/api/generate-latex.js
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-
-// Set the runtime to edge
-export const runtime = 'edge';
+// Set the runtime to edge for Next.js Pages Router API routes
+export const config = { runtime: 'edge' };
 
 export default async function handler(req) {
   if (req.method !== 'POST') {
@@ -11,24 +11,27 @@ export default async function handler(req) {
   }
 
   try {
+    if (!process.env.GOOGLE_API_KEY) {
+      return new Response('Server misconfiguration: GOOGLE_API_KEY is missing', { status: 500 });
+    }
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const { content } = await req.json();
 
     if (!content) {
       return new Response('Content is required', { status: 400 });
     }
     
-    // A specific prompt to instruct the AI to act as a LaTeX expert.
-    const prompt = `You are an expert LaTeX document creator. Your task is to convert the following text or markdown content into a complete, well-structured, and beautifully formatted LaTeX document.
+    // An improved, more specific prompt for better and more reliable LaTeX code.
+    const prompt = `You are an expert LaTeX document creator. Your task is to convert the following text or markdown content into a complete, well-structured, and beautifully formatted LaTeX document that compiles with pdfLaTeX.
 
 **Instructions:**
-1.  The output MUST be only the raw LaTeX code.
+1.  The output MUST be only the raw LaTeX code. Do NOT include any explanations, comments, or markdown fences (like \`\`\`latex\`). The output must be ready to compile directly.
 2.  Start the document with \`\\documentclass{article}\`.
-3.  Include necessary packages like \`geometry\`, \`amsmath\`, \`graphicx\`, etc., if the content requires them.
-4.  Create a suitable title, author (use "Wordara AI"), and date based on the content.
-5.  Use appropriate LaTeX commands for sections, subsections, lists (itemize, enumerate), bold (\`\\textbf\`), italics (\`\\textit\`), and mathematical equations.
-6.  Ensure the document structure is logical and readable.
-7.  Do NOT include any explanations, comments, or markdown fences (like \`\`\`latex\`) in your response. The output must be ready to compile directly.
-8.  End the document with \`\\end{document}\`.
+3.  **Crucially, include modern and essential packages.** Always include \`\\usepackage[utf8]{inputenc}\`, \`\\usepackage{amsmath}\`, \`\\usepackage{graphicx}\`, \`\\usepackage{geometry}\` (e.g., \`\\geometry{a4paper, margin=1in}\`), and \`\\usepackage{hyperref}\`. Add other packages only if the content explicitly requires them.
+4.  Create a suitable title, author (use "Wordara AI"), and date (\`\\today\`).
+5.  Use standard LaTeX commands for sections, lists, bold (\`\\textbf\`), italics (\`\\textit\`), and mathematical environments.
+6.  Ensure the document structure is logical and readable, and all environments are correctly opened and closed.
+7.  End the document with \`\\end{document}\`.
 
 Here is the content to convert:
 ---

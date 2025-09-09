@@ -294,3 +294,54 @@ body {
   background-color: rgba(255, 255, 255, 0.05);
   font-weight: 600;
 }
+
+.live-preview-container {
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.6;
+}
+.live-preview-container .maketitle {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1.5rem;
+}
+.live-preview-container .maketitle .author,
+.live-preview-container .maketitle .date {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    color: #4a5568;
+}
+.live-preview-container .preview-h1,
+.live-preview-container .maketitle h1 {
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.live-preview-container .preview-h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+.live-preview-container .preview-h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.live-preview-container p {
+  margin-bottom: 1rem;
+}
+.live-preview-container ul,
+.live-preview-container ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.live-preview-container ul {
+  list-style-type: disc;
+}
+.live-preview-container ol {
+  list-style-type: decimal;
+}

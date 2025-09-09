@@ -6,59 +6,73 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { latex } = req.body;
+    const { latex, engine } = req.body;
     if (!latex) {
       return res.status(400).json({ error: 'LaTeX content is required.', log: 'No LaTeX content was provided.' });
     }
 
-    // --- FIX: The correct endpoint is the base URL, not /compile ---
-    const response = await fetch('https://latexonline.cc/compile/text', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text: latex,
-        command: 'pdflatex'
-      }),
-    });
+    const allowed = new Set(['pdflatex', 'xelatex', 'lualatex']);
+    const selectedEngine = (typeof engine === 'string' && allowed.has(engine.toLowerCase()))
+      ? engine.toLowerCase()
+      : 'pdflatex';
 
-    // --- BULLETPROOF ERROR HANDLING ---
-    // First, check if the HTTP response status is successful.
-    if (!response.ok) {
-      // If not, the service returned an error (e.g. 500, 502, 404).
-      // The body is likely HTML or plain text, not JSON.
-      const errorText = await response.text();
-      const logMessage = `External compilation service failed with status ${response.status}. Response: ${errorText.substring(0, 500)}`; // Truncate to avoid huge logs
-      console.error('LaTeX Service HTTP Error:', logMessage);
-      
-      // Send our consistent JSON error format back to the frontend.
-      return res.status(400).json({ error: 'Compilation service is unavailable or returned an error.', log: logMessage });
-    }
-    
-    // If the status is OK, now we can safely parse the body as JSON.
-    const result = await response.json();
+    // Helper: compile via latexonline.cc (preferred). This endpoint expects GET with query params.
+    const compileWithLatexOnline = async () => {
+      const endpoint = 'https://latexonline.cc/compile';
+      const params = new URLSearchParams();
+      params.set('text', latex);
+      params.set('engine', selectedEngine);
+      const url = `${endpoint}?${params.toString()}`;
+      const response = await fetch(url, { method: 'GET' });
+      return response;
+    };
 
-    // Now, check the logical status inside the JSON payload.
-    if (result.status === 'error') {
-      const errorLog = result.log || 'Unknown compilation error from latexonline.cc.';
-      console.error('LaTeX Code Compilation Error:', errorLog);
-      return res.status(400).json({ error: 'Compilation failed due to LaTeX errors.', log: errorLog });
+    // Helper: fallback to texlive.net latexcgi
+    const compileWithTexlive = async () => {
+      const endpoint = 'https://texlive.net/cgi-bin/latexcgi';
+      const params = new URLSearchParams();
+      params.set('text', latex);
+      params.set('format', 'pdf');
+      params.set('engine', selectedEngine);
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString(),
+      });
+      return response;
+    };
+
+    // Try primary service first
+    let response = await compileWithLatexOnline();
+
+    // If not OK or not a PDF, try the fallback
+    const contentType = (response.headers.get('content-type') || '').toLowerCase();
+    if (
+      !response.ok ||
+      !(contentType.includes('application/pdf') || contentType.includes('application/octet-stream'))
+    ) {
+      const primaryErrorText = await response.text().catch(() => '');
+      console.error('latexonline.cc compile failed:', primaryErrorText);
+      const fallback = await compileWithTexlive();
+      if (!fallback.ok) {
+        const fallbackText = await fallback.text().catch(() => '');
+        return res.status(502).json({
+          error: 'Compilation failed in both services.',
+          log: `Primary (latexonline.cc): ${primaryErrorText}\nFallback (texlive.net): ${fallbackText}`,
+        });
+      }
+      response = fallback; // Use fallback response
     }
 
-    // Handle the success case
-    if (result.status === 'success' && result.result) {
-      const pdfBuffer = Buffer.from(result.result, 'base64');
-      
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename="document.pdf"');
-      res.send(pdfBuffer);
-    } else {
-      throw new Error('Unexpected successful response format from compilation service.');
-    }
+    // On success, the service returns the raw PDF file data
+    const pdfArrayBuffer = await response.arrayBuffer();
+    const pdfBuffer = Buffer.from(pdfArrayBuffer);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="document.pdf"');
+    res.send(pdfBuffer);
 
   } catch (error) {
-    // This outer catch handles network failures or any other unexpected errors.
     console.error('Error in /api/compile-latex:', error);
     res.status(500).json({ error: 'An internal server error occurred.', log: error.message });
   }
